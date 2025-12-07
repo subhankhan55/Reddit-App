@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_app/features/auth/repository/auth_repository.dart';
 
 final AuthControllerProvider = Provider((ref)=>AuthController(authRepository: ref.read(authRepositoryProvider),),);
