@@ -14,6 +14,7 @@ final storageProvider = Provider((ref) {
   return FirebaseStorage.instance;
 });
 
+
 final googleSignInProvider = Provider((ref) {
-  return GoogleSignIn();
-}); 
+  return GoogleSignIn();   // ✔ This works with proper package version
+});

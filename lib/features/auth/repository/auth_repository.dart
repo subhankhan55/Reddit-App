@@ -16,27 +16,34 @@ class AuthRepository {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
-  AuthRepository({required FirebaseFirestore firestore, required FirebaseAuth auth, required GoogleSignIn googleSignIn,}):
-    _auth = auth,
-    _firestore = firestore,
-    _googleSignIn = googleSignIn;
 
-    Future<void> signInWithGoogle() async {
-        try {
-          final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-          if (googleUser == null) return;
-          
-          final googleAuth = await googleUser.authentication;
-          final credential = GoogleAuthProvider.credential(
-            accessToken: googleAuth.accessToken,
-            idToken: googleAuth.idToken
-          );
-          UserCredential userCredential = await _auth.signInWithCredential(credential);
+  AuthRepository({
+    required FirebaseFirestore firestore,
+    required FirebaseAuth auth,
+    required GoogleSignIn googleSignIn,
+  })  : _firestore = firestore,
+        _auth = auth,
+        _googleSignIn = googleSignIn;
 
-          print(userCredential.user?.email);
-          
-          } catch (e) {
-            print(e);
-          }
+  Future<void> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) return;
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+
+      print(userCredential.user?.email);
+    } catch (e) {
+      print(e);
     }
+  }
 }
