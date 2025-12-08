@@ -24,10 +24,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Reddit App',
       theme: Pallete.darkModeAppTheme,
-      home: const LoginScreen(),
+      routerDelegate: RoutemasterDelegate(routesBuilder: (context) =>loggedOutRoute),
+      routeInformationParser: const  RoutemasterParser(),
     );
   }
 }
