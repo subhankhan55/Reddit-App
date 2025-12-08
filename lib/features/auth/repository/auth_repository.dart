@@ -29,7 +29,7 @@ class AuthRepository {
         _googleSignIn = googleSignIn;
   CollectionReference get _users =>
       _firestore.collection(FirebaseConstants.usersCollection);
-
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
   Future<void> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -60,6 +60,8 @@ class AuthRepository {
           );
                await _users.doc(userModel.uid).set(userModel.toMap());
 
+       }else{
+         userModel = await getUserData(userCredential.user!.uid).first;
        }
      
 
@@ -67,5 +69,10 @@ class AuthRepository {
     } catch (e) {
       print(e);
     }
+  }
+  
+  Stream<UserModel> getUserData(String uid) {
+    return _users.doc(uid).snapshots().map((event) => UserModel.fromMap(
+        event.data() as Map<String, dynamic>));
   }
 }
