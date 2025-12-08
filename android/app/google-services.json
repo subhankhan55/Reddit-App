@@ -1,26 +1,51 @@
 {
   "project_info": {
-    "project_number": "98563951210",
-    "project_id": "reddit-375e3",
-    "storage_bucket": "reddit-375e3.firebasestorage.app"
+    "project_number": "568003608686",
+    "project_id": "reddit-9a073",
+    "storage_bucket": "reddit-9a073.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:98563951210:android:f031ee044c58417dff1813",
+        "mobilesdk_app_id": "1:568003608686:android:92af3b5ebc02ecbd56e67f",
         "android_client_info": {
-          "package_name": "com.example.reddit_app"
+          "package_name": "com.example.helloworld"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "568003608686-lilodvksiiqob74ldov2lunqbsrn2vec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.helloworld",
+            "certificate_hash": "d454d0e10f68634de1bb99775e87d8233da597b5"
+          }
+        },
+        {
+          "client_id": "568003608686-odhd0f5vse35ptjbq72ptp9r49lsv5nq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBJdJtMWtLRMxci1dKpJZ_8S93yjzVosdY"
+          "current_key": "AIzaSyBJqMwmo0nKGntTfp0tpkW4QN83z-9X7tM"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "568003608686-odhd0f5vse35ptjbq72ptp9r49lsv5nq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "568003608686-qa29481kvcsr13i291cktse3cjuedvbv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.redditApp"
+              }
+            }
+          ]
         }
       }
     }

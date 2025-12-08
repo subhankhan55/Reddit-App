@@ -25,9 +25,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -41,46 +47,28 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAgXErXq3xSTbu1wsMNB56YEAlIigNTykA',
-    appId: '1:98563951210:web:43e143584d96612aff1813',
-    messagingSenderId: '98563951210',
-    projectId: 'reddit-375e3',
-    authDomain: 'reddit-375e3.firebaseapp.com',
-    storageBucket: 'reddit-375e3.firebasestorage.app',
+    apiKey: 'AIzaSyA9obJjVW9H3bz3UL0IzphT9vWGYQJh7ZE',
+    appId: '1:568003608686:web:26b0ad867e30163356e67f',
+    messagingSenderId: '568003608686',
+    projectId: 'reddit-9a073',
+    authDomain: 'reddit-9a073.firebaseapp.com',
+    storageBucket: 'reddit-9a073.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBJdJtMWtLRMxci1dKpJZ_8S93yjzVosdY',
-    appId: '1:98563951210:android:f031ee044c58417dff1813',
-    messagingSenderId: '98563951210',
-    projectId: 'reddit-375e3',
-    storageBucket: 'reddit-375e3.firebasestorage.app',
+    apiKey: 'AIzaSyBJqMwmo0nKGntTfp0tpkW4QN83z-9X7tM',
+    appId: '1:568003608686:android:92af3b5ebc02ecbd56e67f',
+    messagingSenderId: '568003608686',
+    projectId: 'reddit-9a073',
+    storageBucket: 'reddit-9a073.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAQrFSBstWUtuHtB8T3q9vsZST65pXOH0g',
-    appId: '1:98563951210:ios:c358c36b36bef28cff1813',
-    messagingSenderId: '98563951210',
-    projectId: 'reddit-375e3',
-    storageBucket: 'reddit-375e3.firebasestorage.app',
+    apiKey: 'AIzaSyD7M82BY_N8nnfaFb5P3-OXjlp5g4ziDAk',
+    appId: '1:568003608686:ios:3ab06edda040da2856e67f',
+    messagingSenderId: '568003608686',
+    projectId: 'reddit-9a073',
+    storageBucket: 'reddit-9a073.firebasestorage.app',
     iosBundleId: 'com.example.redditApp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAQrFSBstWUtuHtB8T3q9vsZST65pXOH0g',
-    appId: '1:98563951210:ios:c358c36b36bef28cff1813',
-    messagingSenderId: '98563951210',
-    projectId: 'reddit-375e3',
-    storageBucket: 'reddit-375e3.firebasestorage.app',
-    iosBundleId: 'com.example.redditApp',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAgXErXq3xSTbu1wsMNB56YEAlIigNTykA',
-    appId: '1:98563951210:web:3f4a9a858022e2e5ff1813',
-    messagingSenderId: '98563951210',
-    projectId: 'reddit-375e3',
-    authDomain: 'reddit-375e3.firebaseapp.com',
-    storageBucket: 'reddit-375e3.firebasestorage.app',
   );
 }
