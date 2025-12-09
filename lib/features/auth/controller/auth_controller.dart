@@ -1,22 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; 
 import 'package:reddit_app/features/auth/repository/auth_repository.dart';
 import 'package:reddit_app/models/user_model.dart';
-import 'package:riverpod/src/framework.dart';
-final userProvider=StreamProvider<UserModel?>((ref)=>Stream.value(null));
-final authControllerProvider = Provider(
+
+final userProvider = StateProvider<UserModel?>((ref) => null);
+
+final authControllerProvider = StateNotifierProvider<AuthController, bool>(
   (ref) => AuthController(
-    authRepository: ref.read(AuthRepositoryProvider), ref: ref,
+    authRepository: ref.read(AuthRepositoryProvider),
+    ref: ref,
   ),
 );
+
 final authStateChangesProvider = StreamProvider(
     (ref) {
   final authController = ref.watch(authControllerProvider.notifier);
-  return authController.getUserData(ref.watch(userProvider).value!.uid);
-}
-);
+  return authController.authStateChanges; // Use the getter from AuthController
+});
 
 final getUserDataProvider=StreamProvider.family((ref, String uid){
   final authController=ref.watch(authControllerProvider.notifier);
