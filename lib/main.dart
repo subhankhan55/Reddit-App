@@ -58,4 +58,3 @@ class _MyAppState extends ConsumerState<MyApp> {
     ),error:(error, StackTrace)=>ErrorText(error: error.toString()), loading: ()=>const CircularProgressIndicator(),);  
   }
 }
-
