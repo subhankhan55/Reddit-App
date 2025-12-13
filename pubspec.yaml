@@ -41,7 +41,6 @@ dependencies:
   google_sign_in: ^6.1.6
   flutter_riverpod: ^2.5.0
   routemaster: ^1.0.1
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
