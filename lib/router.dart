@@ -15,4 +15,8 @@ final loggedInRoute = RouteMap(routes: {
   '/': (_) => const MaterialPage(child: HomeScreen()),
   '/add-post': (_) => const MaterialPage(child: AddPostScreen()),
   '/user-profile': (_) => const MaterialPage(child: ProfileScreen()),
+<<<<<<< HEAD
   });
+=======
+  });
+>>>>>>> 37678a1de267ad6118f5f98629a348068cae4b03

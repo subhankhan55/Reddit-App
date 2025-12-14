@@ -53,4 +53,8 @@ class AuthController extends StateNotifier<bool> {
     // Clear the local user state in Riverpod
     _ref.read(userProvider.notifier).update((state) => null);
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 37678a1de267ad6118f5f98629a348068cae4b03

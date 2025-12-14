@@ -93,4 +93,8 @@ class AuthRepository {
       throw Exception(e.toString());
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 37678a1de267ad6118f5f98629a348068cae4b03
