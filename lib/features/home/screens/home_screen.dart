@@ -16,16 +16,50 @@ class HomeScreen extends ConsumerWidget {
     Routemaster.of(context).push('/add-post');
   }
 
+  // NEW FUNCTION: Function to navigate to the user profile screen
+  void navigateToUserProfile(BuildContext context) {
+    Routemaster.of(context).push('/user-profile');
+  }
+
+  // Function to log out the user
+  void logOut(WidgetRef ref) {
+    ref.read(authControllerProvider.notifier).logOut();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Check if the user is a guest (userProvider will be null if logged out)
     final user = ref.watch(userProvider);
     final isGuest = user == null;
+    
+    // Get the current user's data to display the profile picture
+    final userData = ref.watch(userProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Global Feed'),
         centerTitle: false,
+        actions: [
+          // 1. Profile Navigation Button
+          if (!isGuest && userData != null) // Only show if user is logged in
+            GestureDetector(
+              onTap: () => navigateToUserProfile(context),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(userData.profilePic),
+                  radius: 16,
+                ),
+              ),
+            ),
+
+          // 2. Logout Button
+          IconButton(
+            onPressed: isGuest ? null : () => logOut(ref),
+            icon: const Icon(Icons.logout),
+            tooltip: 'Log Out',
+          ),
+        ],
       ),
       // Display the Global Post Feed
       body: ref.watch(guestPostsProvider).when(
