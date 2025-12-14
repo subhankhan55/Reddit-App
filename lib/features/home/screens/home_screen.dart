@@ -15,12 +15,14 @@ class HomeScreen extends ConsumerWidget { // Ensure this is ConsumerWidget
   void navigateToAddPost(BuildContext context) {
     Routemaster.of(context).push('/add-post');
   }
+  void navigateToUserProfile(BuildContext context) {
+    Routemaster.of(context).push('/user-profile');
+  }
 
   void logOut(WidgetRef ref) {
     ref.read(authControllerProvider.notifier).logOut();
   }
 
-  // --- FINAL FIX: Use Routemaster.pop() to return to Login Screen ---
   void navigateToLogin(WidgetRef ref, BuildContext context) {
     // 1. Reset the guest flag to false.
     ref.read(isGuestProvider.notifier).update((state) => false);
@@ -52,16 +54,19 @@ class HomeScreen extends ConsumerWidget { // Ensure this is ConsumerWidget
               child: const Text('Sign In', style: TextStyle(fontWeight: FontWeight.bold)),
             )
           else
-            // Logged-In Mode: Profile Placeholder and Logout Button
+            // Logged-In Mode: Profile Icon/Button and Logout Button
             Row(
               children: [
-                // Profile Placeholder
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0), 
-                  child: CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    child: Text(userData!.name[0]), 
-                    radius: 16,
+                // --- FIX: Wrap Profile Placeholder in a GestureDetector ---
+                GestureDetector( 
+                  onTap: () => navigateToUserProfile(context), // <-- WIRE UP NAVIGATION
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0), 
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      child: Text(userData!.name[0]), 
+                      radius: 16,
+                    ),
                   ),
                 ),
                 // Logout Button
