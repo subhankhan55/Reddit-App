@@ -1,9 +1,11 @@
+// lib/main.dart
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_app/core/common/error_text.dart';
+import 'package:reddit_app/core/common/loader.dart'; // Assuming you have a Loader widget
 import 'package:reddit_app/features/auth/controller/auth_controller.dart';
-import 'package:reddit_app/features/auth/screen/login_screen.dart';
 import 'package:reddit_app/models/user_model.dart';
 import 'package:reddit_app/router.dart';
 import 'package:reddit_app/theme/pallete.dart';
@@ -42,19 +44,33 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
   @override
   Widget build(BuildContext context) {
-  return ref.watch(authStateChangesProvider).when(data:(data)=>MaterialApp.router(
+    // Watch the new isGuestProvider flag
+    final isGuest = ref.watch(isGuestProvider); 
+
+    return ref.watch(authStateChangesProvider).when(data:(data)=>MaterialApp.router(
       title: 'Reddit App',
       theme: Pallete.darkModeAppTheme,
       routerDelegate: RoutemasterDelegate(routesBuilder: (context) {
+        
+        // 1. Logged In User logic
         if (data != null) {
-          getData(ref, data);
-          if(userModel!=null){
-            return loggedInRoute;
-          }
+            getData(ref, data);
+            if(userModel!=null){
+                return loggedInRoute; 
+            }
         }
+        
+        // 2. Guest Mode (User clicked Skip)
+        // If no Firebase user AND isGuest is TRUE, allow them into the app routes
+        if (data == null && isGuest) {
+            return loggedInRoute; 
+        }
+        
+        // 3. Default (Initial App Launch)
+        // If no Firebase user AND isGuest is FALSE (default state), show Login Screen
         return loggedOutRoute;
       }),
       routeInformationParser: const  RoutemasterParser(),
-    ),error:(error, StackTrace)=>ErrorText(error: error.toString()), loading: ()=>const CircularProgressIndicator(),);  
+    ),error:(error, StackTrace)=>ErrorText(error: error.toString()), loading: ()=>const Loader(),);  
   }
 }

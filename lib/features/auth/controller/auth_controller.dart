@@ -3,11 +3,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; 
-import 'package:reddit_app/core/type_defs.dart'; // Import FutureVoid
+import 'package:reddit_app/core/type_defs.dart'; 
 import 'package:reddit_app/features/auth/repository/auth_repository.dart';
 import 'package:reddit_app/models/user_model.dart';
 
 final userProvider = StateProvider<UserModel?>((ref) => null);
+
+// NEW PROVIDER: Tracks whether the user is in Guest Mode
+final isGuestProvider = StateProvider<bool>((ref) => false); 
 
 final authControllerProvider = StateNotifierProvider<AuthController, bool>(
   (ref) => AuthController(
@@ -19,7 +22,7 @@ final authControllerProvider = StateNotifierProvider<AuthController, bool>(
 final authStateChangesProvider = StreamProvider(
     (ref) {
   final authController = ref.watch(authControllerProvider.notifier);
-  return authController.authStateChanges; // Use the getter from AuthController
+  return authController.authStateChanges; 
 });
 
 final getUserDataProvider=StreamProvider.family((ref, String uid){
@@ -37,8 +40,8 @@ class AuthController extends StateNotifier<bool> {
 
   void signInWithGoogle(BuildContext context) async{
     state=true;
-    // NOTE: Your original code did not handle the async completion or errors here, 
-    // but we will keep the original structure for simplicity.
+    // Reset guest flag upon successful sign-in
+    _ref.read(isGuestProvider.notifier).update((state) => false);
     _authRepository.signInWithGoogle(); 
     state=false;
   }
@@ -49,6 +52,8 @@ class AuthController extends StateNotifier<bool> {
 
   // NEW METHOD: Handles the logout process
   void logOut() async {
+    // Reset guest flag upon logging out
+    _ref.read(isGuestProvider.notifier).update((state) => false);
     await _authRepository.logOut();
     // Clear the local user state in Riverpod
     _ref.read(userProvider.notifier).update((state) => null);
