@@ -8,6 +8,66 @@ import 'package:reddit_app/features/auth/controller/auth_controller.dart';
 import 'package:reddit_app/features/post/controller/post_controller.dart';
 import 'package:reddit_app/models/post_model.dart';
 
+// --- Helper function to show the edit dialog ---
+void _showEditDialog(BuildContext context, WidgetRef ref, PostModel post) {
+  final postController = ref.read(postControllerProvider.notifier);
+  // Initialize controllers with current post data
+  final titleController = TextEditingController(text: post.title);
+  final descriptionController = TextEditingController(text: post.description);
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Edit Post'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(labelText: 'Title'),
+              maxLength: 30, 
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Description'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Basic validation
+              if (titleController.text.trim().isNotEmpty && descriptionController.text.trim().isNotEmpty) {
+                // Call the controller's edit method
+                postController.editPost(
+                  context: context,
+                  post: post,
+                  newTitle: titleController.text.trim(),
+                  newDescription: descriptionController.text.trim(),
+                );
+                Navigator.of(context).pop(); // Close the dialog
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      );
+    },
+  ).then((_) {
+    // Clean up controllers after dialog closes
+    titleController.dispose();
+    descriptionController.dispose();
+  });
+}
+// --- End Helper Function ---
+
+
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -25,7 +85,7 @@ class ProfileScreen extends ConsumerWidget {
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
-            // --- PROFILE HEADER (SliverToBoxAdapter) ---
+            // --- PROFILE HEADER (Existing) ---
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -65,7 +125,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             
-            // --- HEADER FOR USER POSTS ---
+            // --- HEADER FOR USER POSTS (Existing) ---
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -92,7 +152,6 @@ class ProfileScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final post = posts[index];
                 
-                // Get the PostController for deletion action
                 final postController = ref.read(postControllerProvider.notifier);
 
                 return Card(
@@ -103,7 +162,7 @@ class ProfileScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Post Title and Delete Button Row
+                        // Post Title, Edit Button, and Delete Button Row
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -115,13 +174,21 @@ class ProfileScreen extends ConsumerWidget {
                               ),
                             ),
                             
-                            // --- FIX: DELETE BUTTON ---
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                // Call the delete method
-                                postController.deletePost(context, post);
-                              },
+                            // --- EDIT AND DELETE BUTTONS ---
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // 1. EDIT BUTTON
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Colors.blue),
+                                  onPressed: () => _showEditDialog(context, ref, post), // <-- WIRED UP EDIT
+                                ),
+                                // 2. DELETE BUTTON
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => postController.deletePost(context, post),
+                                ),
+                              ],
                             ),
                             // --- END FIX ---
                           ],

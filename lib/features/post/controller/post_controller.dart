@@ -41,12 +41,13 @@ class PostController extends StateNotifier<bool> {
         _ref = ref,
         super(false); // StateNotifier<bool> manages loading state
 
-  // --- BUSINESS LOGIC: CREATE POST (No Change) ---
+  // --- BUSINESS LOGIC: CREATE POST (Existing) ---
   void createPost({
     required BuildContext context,
     required String title,
     required String description,
   }) async {
+    // ... (Existing implementation)
     state = true; 
     final user = _ref.read(userProvider)!; 
     final postId = _postRepository.posts.doc().id; 
@@ -76,23 +77,46 @@ class PostController extends StateNotifier<bool> {
     }
   }
   
-  // --- NEW METHOD: DELETE POST ---
+  // --- BUSINESS LOGIC: DELETE POST (Existing) ---
   void deletePost(BuildContext context, PostModel post) async {
-    state = true; // Set loading state
-
+    state = true; 
     try {
       await _postRepository.deletePost(post);
       showSuccessSnackBar(context, 'Post deleted successfully!');
     } catch (e) {
       showErrorSnackBar(context, e.toString());
     } finally {
-      state = false; // Stop loading
+      state = false; 
+    }
+  }
+
+  // --- NEW METHOD: EDIT POST (UPDATE) ---
+  void editPost({
+    required BuildContext context,
+    required PostModel post,
+    required String newTitle,
+    required String newDescription,
+  }) async {
+    state = true; 
+
+    // Create a new PostModel instance with updated fields
+    final updatedPost = post.copyWith(
+      title: newTitle,
+      description: newDescription,
+    );
+
+    try {
+      await _postRepository.editPost(updatedPost);
+      showSuccessSnackBar(context, 'Post updated successfully!');
+    } catch (e) {
+      showErrorSnackBar(context, e.toString());
+    } finally {
+      state = false; 
     }
   }
 
 
-  // --- DATA FETCHING: FEEDS (No Change) ---
-
+  // --- DATA FETCHING: FEEDS (Existing) ---
   Stream<List<PostModel>> fetchAllPosts() {
     return _postRepository.fetchAllPosts();
   }
@@ -101,8 +125,7 @@ class PostController extends StateNotifier<bool> {
     return _postRepository.fetchUserPosts(uid);
   }
 
-  // --- UTILITIES (No Change) ---
-
+  // --- UTILITIES (Existing) ---
   void showErrorSnackBar(BuildContext context, String text) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()

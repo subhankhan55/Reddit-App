@@ -34,7 +34,7 @@ class PostRepository {
     }
   }
   
-  // 3B. NEW METHOD: Method to delete a post
+  // 3B. Method to delete a post (Existing)
   FutureVoid deletePost(PostModel post) async {
     try {
       await posts.doc(post.id).delete();
@@ -45,7 +45,22 @@ class PostRepository {
     }
   }
 
-  // 4. Method to fetch ALL posts for the Global Feed
+  // 3C. NEW METHOD: Method to edit (update) a post
+  FutureVoid editPost(PostModel post) async {
+    try {
+      // Only update the fields that are allowed to change
+      await posts.doc(post.id).update({
+        'title': post.title,
+        'description': post.description,
+      });
+    } on FirebaseException catch (e) {
+      throw Exception(e.message ?? 'An unknown Firebase error occurred.');
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  // 4. Method to fetch ALL posts for the Global Feed (Existing)
   Stream<List<PostModel>> fetchAllPosts() {
     return posts
         .orderBy('createdAt', descending: true) // Order by latest first
@@ -57,7 +72,7 @@ class PostRepository {
     });
   }
 
-  // 5. Method to fetch posts by a specific user (for the Profile Screen)
+  // 5. Method to fetch posts by a specific user (for the Profile Screen) (Existing)
   Stream<List<PostModel>> fetchUserPosts(String uid) {
     return posts
         .where('authorUid', isEqualTo: uid)
