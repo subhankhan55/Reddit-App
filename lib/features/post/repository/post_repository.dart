@@ -20,13 +20,24 @@ class PostRepository {
   PostRepository({required FirebaseFirestore firestore})
       : _firestore = firestore;
 
-  // 2. FIX: Public getter for the 'posts' Firestore collection
+  // 2. Public getter for the 'posts' Firestore collection
   CollectionReference get posts => _firestore.collection(FirebaseConstants.postsCollection);
 
-  // 3. Method to create a post (Simplified: throws exception on error, returns void on success)
+  // 3. Method to create a post
   FutureVoid addPost(PostModel post) async {
     try {
       await posts.doc(post.id).set(post.toMap());
+    } on FirebaseException catch (e) {
+      throw Exception(e.message ?? 'An unknown Firebase error occurred.');
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+  
+  // 3B. NEW METHOD: Method to delete a post
+  FutureVoid deletePost(PostModel post) async {
+    try {
+      await posts.doc(post.id).delete();
     } on FirebaseException catch (e) {
       throw Exception(e.message ?? 'An unknown Firebase error occurred.');
     } catch (e) {

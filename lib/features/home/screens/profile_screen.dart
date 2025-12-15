@@ -13,14 +13,10 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. Get the current user data (MUST NOT BE NULL since we are in loggedInRoute)
     final user = ref.watch(userProvider);
     final uid = user!.uid; 
-
-    // 2. Watch the stream of posts for the current user
     final userPostsStream = ref.watch(userPostsProvider(uid));
 
-    // 3. Build the UI
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Profile'),
@@ -37,7 +33,6 @@ class ProfileScreen extends ConsumerWidget {
                   children: [
                     // Profile Picture/Avatar
                     CircleAvatar(
-                      // Using a placeholder image or a simple colored avatar
                       backgroundColor: Colors.blueGrey,
                       radius: 40,
                       child: Text(
@@ -55,7 +50,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    // User UID (as placeholder for a bio/karma display)
+                    // User UID
                     Text(
                       'UID: ${user.uid.substring(0, 8)}...',
                       style: const TextStyle(
@@ -64,7 +59,6 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // Separator
                     const Divider(),
                   ],
                 ),
@@ -98,7 +92,9 @@ class ProfileScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final post = posts[index];
                 
-                // Using the basic Card widget here for consistency with HomeScreen
+                // Get the PostController for deletion action
+                final postController = ref.read(postControllerProvider.notifier);
+
                 return Card(
                   key: ValueKey(post.id),
                   margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -107,7 +103,29 @@ class ProfileScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(post.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        // Post Title and Delete Button Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                post.title, 
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            
+                            // --- FIX: DELETE BUTTON ---
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                // Call the delete method
+                                postController.deletePost(context, post);
+                              },
+                            ),
+                            // --- END FIX ---
+                          ],
+                        ),
                         const SizedBox(height: 8),
                         Text(post.description, maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6))),
                         const SizedBox(height: 8),

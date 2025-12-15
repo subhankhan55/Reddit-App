@@ -7,7 +7,6 @@ import 'package:reddit_app/features/auth/controller/auth_controller.dart';
 import 'package:reddit_app/features/post/repository/post_repository.dart';
 import 'package:reddit_app/models/post_model.dart';
 import 'package:routemaster/routemaster.dart';
-// REMOVED: import 'package:uuid/uuid.dart'; // NO external UUID package
 
 // 1. Provider to expose the list of posts by the current user
 final userPostsProvider = StreamProvider.family((ref, String uid) {
@@ -42,22 +41,16 @@ class PostController extends StateNotifier<bool> {
         _ref = ref,
         super(false); // StateNotifier<bool> manages loading state
 
-  // --- BUSINESS LOGIC: CREATE POST ---
+  // --- BUSINESS LOGIC: CREATE POST (No Change) ---
   void createPost({
     required BuildContext context,
     required String title,
     required String description,
   }) async {
-    state = true; // Set loading state
-
-    // 1. Get the current user data
+    state = true; 
     final user = _ref.read(userProvider)!; 
-    
-    // 2. SIMPLEST ID GENERATION: Ask the repository's collection for a new ID.
-    // This uses the Firestore dependency which is already required.
     final postId = _postRepository.posts.doc().id; 
 
-    // 3. Create the PostModel (Simplified)
     final PostModel post = PostModel(
       id: postId, 
       title: title,
@@ -72,21 +65,33 @@ class PostController extends StateNotifier<bool> {
       createdAt: DateTime.now(),
     );
 
-    // 4. Save the post to Firestore via the Repository
     try {
       await _postRepository.addPost(post);
-      // Success: Navigate back and show success message
       showSuccessSnackBar(context, 'Post created successfully!');
       Routemaster.of(context).pop();
     } catch (e) {
-      // Failure: Show error message caught from the Repository
+      showErrorSnackBar(context, e.toString());
+    } finally {
+      state = false; 
+    }
+  }
+  
+  // --- NEW METHOD: DELETE POST ---
+  void deletePost(BuildContext context, PostModel post) async {
+    state = true; // Set loading state
+
+    try {
+      await _postRepository.deletePost(post);
+      showSuccessSnackBar(context, 'Post deleted successfully!');
+    } catch (e) {
       showErrorSnackBar(context, e.toString());
     } finally {
       state = false; // Stop loading
     }
   }
 
-  // --- DATA FETCHING: FEEDS ---
+
+  // --- DATA FETCHING: FEEDS (No Change) ---
 
   Stream<List<PostModel>> fetchAllPosts() {
     return _postRepository.fetchAllPosts();
@@ -96,7 +101,7 @@ class PostController extends StateNotifier<bool> {
     return _postRepository.fetchUserPosts(uid);
   }
 
-  // --- UTILITIES ---
+  // --- UTILITIES (No Change) ---
 
   void showErrorSnackBar(BuildContext context, String text) {
     ScaffoldMessenger.of(context)
