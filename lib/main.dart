@@ -4,15 +4,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_app/core/common/error_text.dart';
-import 'package:reddit_app/core/common/loader.dart'; // Assuming you have a Loader widget
+import 'package:reddit_app/core/common/loader.dart';
 import 'package:reddit_app/features/auth/controller/auth_controller.dart';
 import 'package:reddit_app/models/user_model.dart';
 import 'package:reddit_app/router.dart';
-import 'package:reddit_app/theme/pallete.dart';
+// NEW IMPORT
+import 'package:reddit_app/theme/theme_controller.dart'; 
+// REMOVED: import 'package:reddit_app/theme/pallete.dart'; (Not strictly needed here now)
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:routemaster/routemaster.dart';
 import 'firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -26,15 +29,17 @@ void main() async {
     ),
   );
 }
+
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
   ConsumerState<MyApp> createState() => _MyAppState();
 }
-class _MyAppState extends ConsumerState<MyApp> {
 
+class _MyAppState extends ConsumerState<MyApp> {
   UserModel? userModel;
+  
   void getData(WidgetRef ref, User data) async {
     userModel = await ref.watch(authControllerProvider.notifier).getUserData(data.uid).first;
     ref.read(userProvider.notifier).update((state)=>userModel);
@@ -42,14 +47,19 @@ class _MyAppState extends ConsumerState<MyApp> {
       
     });
   }
+  
   @override
   Widget build(BuildContext context) {
     // Watch the new isGuestProvider flag
     final isGuest = ref.watch(isGuestProvider); 
+    
+    // NEW: Watch the dynamic theme provider
+    final currentTheme = ref.watch(themeNotifierProvider);
 
     return ref.watch(authStateChangesProvider).when(data:(data)=>MaterialApp.router(
       title: 'Reddit App',
-      theme: Pallete.darkModeAppTheme,
+      // FIX: Use the dynamic theme from the provider
+      theme: currentTheme, 
       routerDelegate: RoutemasterDelegate(routesBuilder: (context) {
         
         // 1. Logged In User logic
@@ -61,13 +71,11 @@ class _MyAppState extends ConsumerState<MyApp> {
         }
         
         // 2. Guest Mode (User clicked Skip)
-        // If no Firebase user AND isGuest is TRUE, allow them into the app routes
         if (data == null && isGuest) {
             return loggedInRoute; 
         }
         
         // 3. Default (Initial App Launch)
-        // If no Firebase user AND isGuest is FALSE (default state), show Login Screen
         return loggedOutRoute;
       }),
       routeInformationParser: const  RoutemasterParser(),

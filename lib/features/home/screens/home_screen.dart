@@ -7,9 +7,11 @@ import 'package:reddit_app/core/common/loader.dart';
 import 'package:reddit_app/features/auth/controller/auth_controller.dart';
 import 'package:reddit_app/features/post/controller/post_controller.dart';
 import 'package:routemaster/routemaster.dart'; 
-// Assuming PostModel is imported or defined elsewhere
+// NEW IMPORT for theme control
+import 'package:reddit_app/theme/theme_controller.dart'; 
 
-class HomeScreen extends ConsumerWidget { // Ensure this is ConsumerWidget
+
+class HomeScreen extends ConsumerWidget { 
   const HomeScreen({super.key});
 
   void navigateToAddPost(BuildContext context) {
@@ -27,8 +29,7 @@ class HomeScreen extends ConsumerWidget { // Ensure this is ConsumerWidget
     // 1. Reset the guest flag to false.
     ref.read(isGuestProvider.notifier).update((state) => false);
     
-    // 2. Pop the current route (HomeScreen). The main.dart router delegate will 
-    //    see isGuest=false and correctly push the loggedOutRoute (LoginScreen).
+    // 2. Pop the current route (HomeScreen).
     Routemaster.of(context).pop(); 
   }
 
@@ -38,7 +39,8 @@ class HomeScreen extends ConsumerWidget { // Ensure this is ConsumerWidget
     final isGuest = user == null;
     final userData = ref.watch(userProvider);
     
-    final currentUid = userData?.uid; 
+    // Determine the current theme brightness to show the opposite icon
+    final currentThemeIsDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,17 +51,29 @@ class HomeScreen extends ConsumerWidget { // Ensure this is ConsumerWidget
           if (isGuest)
             // Guest Mode: Functional Sign In button
             TextButton(
-              // FIX: Call the new function with ref and context
               onPressed: () => navigateToLogin(ref, context), 
               child: const Text('Sign In', style: TextStyle(fontWeight: FontWeight.bold)),
             )
           else
-            // Logged-In Mode: Profile Icon/Button and Logout Button
+            // Logged-In Mode: Theme Toggle, Profile Icon, and Logout Button
             Row(
               children: [
-                // --- FIX: Wrap Profile Placeholder in a GestureDetector ---
+                
+                // --- NEW: THEME TOGGLE BUTTON ---
+                IconButton(
+                  // Show sun if currently dark, show moon if currently light
+                  icon: Icon(currentThemeIsDark ? Icons.light_mode : Icons.dark_mode),
+                  onPressed: () {
+                    // Call the toggleTheme method from the ThemeNotifier
+                    ref.read(themeNotifierProvider.notifier).toggleTheme();
+                  },
+                  tooltip: 'Toggle Theme',
+                ),
+                // --- END NEW ---
+
+                // Profile Placeholder
                 GestureDetector( 
-                  onTap: () => navigateToUserProfile(context), // <-- WIRE UP NAVIGATION
+                  onTap: () => navigateToUserProfile(context),
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0), 
                     child: CircleAvatar(
@@ -79,7 +93,7 @@ class HomeScreen extends ConsumerWidget { // Ensure this is ConsumerWidget
             ),
         ],
       ),
-      // ... (rest of the body and FAB remains the same)
+      // ... (rest of the body remains the same)
       body: ref.watch(guestPostsProvider).when(
         data: (posts) {
           if (posts.isEmpty) {

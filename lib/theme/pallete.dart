@@ -1,3 +1,5 @@
+// lib/theme/pallete.dart
+
 import 'package:flutter/material.dart';
 
 class Pallete {
@@ -7,9 +9,9 @@ class Pallete {
   static const drawerColor = Color.fromRGBO(18, 18, 18, 1);
   static const whiteColor = Colors.white;
   static var redColor = Colors.red.shade500;
-  static var blueColor = Colors.blue.shade300;
+  static var blueColor = Colors.blue.shade300; // Using a blue accent for light mode contrast
 
-  // Themes
+  // Dark Theme (Existing)
   static var darkModeAppTheme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: blackColor,
     cardColor: greyColor,
@@ -25,9 +27,10 @@ class Pallete {
     primaryColor: redColor,
   );
 
+  // Light Theme (Refined)
   static var lightModeAppTheme = ThemeData.light().copyWith(
     scaffoldBackgroundColor: whiteColor,
-    cardColor: greyColor,
+    cardColor: const Color.fromRGBO(240, 240, 240, 1), // Light grey for better card visibility
     appBarTheme: const AppBarTheme(
       backgroundColor: whiteColor,
       elevation: 0,
@@ -38,6 +41,6 @@ class Pallete {
     drawerTheme: const DrawerThemeData(
       backgroundColor: whiteColor,
     ),
-    primaryColor: redColor,
+    primaryColor: blueColor, // Using blue for light theme primary color
   );
 }
